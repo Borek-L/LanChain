@@ -34,6 +34,8 @@ def multicast_receiver(conn,group,port):
         try:
             data, addr = conn.recvfrom(4096)
             data = data.decode().strip()
+            # 调试：打印收到的数据来源
+            print(f"\n[调试] 收到数据来自 {addr[0]}:{addr[1]}，类型: {data[:20]}...")
             # 字符串解析即可
             if data.startswith("HEARTBEAT:"):
                 # 心跳 f"HEARTBEAT:{msg}"
@@ -50,27 +52,17 @@ def multicast_receiver(conn,group,port):
                     userlist.append(User(addr[0], addr[1], nick))
 
             elif data.startswith("CHAT:"):
-                # 消息 f"CHAT:{target_name}:{message}"
+                # 消息 f"CHAT:{nick_name}:{message}"
                 data = data[5:]
-                parts = data.split(":",1)
+                parts = data.split(":", 1)
+                if len(parts) < 2:
+                    continue  # 格式不正确的消息，跳过
                 nick_name, message = parts[0], parts[1]
-                print(f"[{nick_name}] {time.strftime('%H:%M:%S')}:")
+                print(f"\n[{nick_name}] {time.strftime('%H:%M:%S')}:")
                 print(message)
                 print(">", end="", flush=True)
                 # history
                 HistoryDao.add_record(addr[0], nick_name, message)
-
-            elif data.startswith("FILE_REQ:"):
-                # 文件请求：FILE_REQ:发送者昵称:文件名:大小
-                parts = data[9:].split(":", 2)
-                if len(parts) == 3:
-                    from_nick, filename, filesize = parts
-                    FileTransUtil.file_request_queue.put({
-                        "from_nick": from_nick,
-                        "from_ip": addr[0],
-                        "filename": filename,
-                        "filesize": int(filesize)
-                    })
 
             elif data.startswith("FILE_REQ:"):
                 # 文件请求：FILE_REQ:发送者昵称:文件名:大小
@@ -180,6 +172,7 @@ def main():
     # 7. 设置不回环(并且开局发送自身)
     sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 0)
     print(f"已入组播组：{group}:{port}，使用接口{user.host}:{user.port}")
+    print(f"[调试] 本机 IP: {user.host}，UDP 端口: {port}，TCP 文件端口: {port + 1}")
     myself = User(host=user.host, port=user.port, nickname=user.nickname)
     userlist.append(myself)
 

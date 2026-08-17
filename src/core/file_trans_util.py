@@ -38,11 +38,14 @@ class FileTransUtil:
         return target_ip, target_port, filepath, filename, filesize
 
     @classmethod
-    def send_file_tcp(cls,target_ip, target_port, filepath, filename, filesize):
-        """通过TCP发送文件数据"""
+    def send_file_tcp(cls, target_ip, target_port, filepath, filename, filesize):
+        """通过TCP发送文件数据
+        注意：TCP 文件传输使用 port+1，避免与 UDP 聊天端口冲突
+        """
+        tcp_port = target_port + 1  # UDP 用 port, TCP 用 port+1
         tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            tcp_sock.connect((target_ip, target_port))
+            tcp_sock.connect((target_ip, tcp_port))
             start_time = time.time()
             sent_size = 0
 
@@ -70,13 +73,16 @@ class FileTransUtil:
             tcp_sock.close()
 
     @classmethod
-    def tcp_file_server(cls,port, save_dir="./LanChat/received"):
-        """TCP文件接收服务器线程"""
+    def tcp_file_server(cls, port, save_dir="./LanChat/received"):
+        """TCP文件接收服务器线程
+        注意：TCP 文件传输使用 port+1，避免与 UDP 聊天端口冲突
+        """
+        tcp_port = port + 1  # UDP 用 port, TCP 用 port+1
         os.makedirs(save_dir, exist_ok=True)
 
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_sock.bind(("0.0.0.0", port))
+        server_sock.bind(("0.0.0.0", tcp_port))
         server_sock.listen(5)
         server_sock.settimeout(1.0)
 
