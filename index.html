@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LanChat - 风雨传声</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+    header { text-align: center; margin-bottom: 48px; }
+    header h1 { font-size: 2.4rem; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+    header p { font-size: 1.1rem; color: #94a3b8; }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 12px;
+    }
+    section { margin-bottom: 36px; }
+    section h2 {
+      font-size: 1.3rem;
+      color: #f1f5f9;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { text-align: left; color: #94a3b8; padding: 8px 12px; border-bottom: 1px solid #334155; font-weight: 500; }
+    td { padding: 8px 12px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+    code {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.85rem;
+      color: #7dd3fc;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+    pre {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+    .highlight { color: #fbbf24; }
+    .tag { color: #34d399; }
+    .warn {
+      background: #422006;
+      border: 1px solid #92400e;
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: #fbbf24;
+      font-size: 0.9rem;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    footer { text-align: center; color: #475569; font-size: 0.8rem; margin-top: 48px; padding-top: 24px; border-top: 1px solid #1e293b; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LanChat</h1>
+      <p>风雨传声 - 去中心化内网通讯工具</p>
+      <span class="badge">v1.0</span>
+      <span class="badge">P2P 架构</span>
+      <span class="badge">Python</span>
+    </header>
+
+    <section>
+      <h2>快速启动</h2>
+      <div class="card">
+        <pre><span class="tag"># 进入 src 目录并启动</span>
+<span class="highlight">$</span> cd src
+<span class="highlight">$</span> python main/main.py</pre>
+        <p style="margin-top: 12px; color: #94a3b8; font-size: 0.9rem;">首次运行会提示输入昵称和端口（默认 9000），之后自动读取 <code>config.ini</code>。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>命令速查</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>命令</th><th>用途</th><th>示例</th></tr></thead>
+          <tbody>
+            <tr><td><code>/who</code></td><td>查看在线用户</td><td><code>/who</code></td></tr>
+            <tr><td><code>/chat</code></td><td>按昵称/IP 发消息</td><td><code>/chat Alice 你好</code></td></tr>
+            <tr><td><code>/msg</code></td><td>给最近联系人发消息</td><td><code>/msg 在吗</code></td></tr>
+            <tr><td><code>/whois</code></td><td>查看最近联系人</td><td><code>/whois</code></td></tr>
+            <tr><td><code>/file</code></td><td>发送文件</td><td><code>/file Alice ./doc.pdf</code></td></tr>
+            <tr><td><code>/history</code></td><td>聊天记录</td><td><code>/history Alice</code></td></tr>
+            <tr><td><code>/nick</code></td><td>修改昵称</td><td><code>/nick Bob</code></td></tr>
+            <tr><td><code>/exit</code></td><td>退出程序</td><td><code>/exit</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>最简流程</h2>
+      <div class="card">
+        <pre><span class="highlight">></span> /who                          <span class="tag"># 1. 看谁在线</span>
+<span class="highlight">></span> /chat Alice 你好！             <span class="tag"># 2. 发消息</span>
+<span class="highlight">></span> /msg 下午开会吗？               <span class="tag"># 3. 继续聊（自动发给最近联系人）</span></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>防火墙配置</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>协议</th><th>端口</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>UDP</td><td>9000</td><td>用户发现 + 聊天消息</td></tr>
+            <tr><td>TCP</td><td>9000</td><td>文件传输</td></tr>
+            <tr><td>IGMP</td><td>-</td><td>组播发现（必须）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <p style="font-weight: 600; margin-bottom: 8px; color: #7dd3fc;">Windows (PowerShell 管理员)</p>
+          <pre style="font-size: 0.78rem;">New-NetFirewallRule -DisplayName "LanChat UDP" `
+  -Direction Inbound -Protocol UDP `
+  -LocalPort 9000 -Action Allow
+New-NetFirewallRule -DisplayName "LanChat TCP" `
+  -Direction Inbound -Protocol TCP `
+  -LocalPort 9000 -Action Allow</pre>
+        </div>
+        <div class="card">
+          <p style="font-weight: 600; margin-bottom: 8px; color: #7dd3fc;">Linux (ufw)</p>
+          <pre style="font-size: 0.78rem;">sudo ufw allow 9000/udp
+sudo ufw allow 9000/tcp</pre>
+          <p style="font-weight: 600; margin: 12px 0 8px; color: #7dd3fc;">Linux (firewalld)</p>
+          <pre style="font-size: 0.78rem;">sudo firewall-cmd --permanent --add-port=9000/udp
+sudo firewall-cmd --permanent --add-port=9000/tcp
+sudo firewall-cmd --reload</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>技术架构</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>层级</th><th>技术</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>用户发现</td><td>UDP 组播</td><td><code>224.1.1.1:9000</code>，心跳 5s，超时 30s</td></tr>
+            <tr><td>即时聊天</td><td>UDP 单播</td><td>点对点消息，端口 9000</td></tr>
+            <tr><td>文件传输</td><td>TCP</td><td>端口 9000，4096B/块</td></tr>
+            <tr><td>配置持久化</td><td>INI 文件</td><td><code>config.ini</code></td></tr>
+            <tr><td>聊天记录</td><td>内存存储</td><td>进程退出即丢失</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>注意事项</h2>
+      <div class="warn">
+        所有用户必须在同一局域网内。组播不跨网段，跨 VLAN 需配置 IGMP Proxy。聊天记录仅存内存，退出即清空。收到的文件保存在 <code>src/main/LanChat/received/</code> 目录。
+      </div>
+    </section>
+
+    <footer>
+      LanChat v1.0 - 风雨传声 - by Yuming
+    </footer>
+  </div>
+</body>
+</html>
